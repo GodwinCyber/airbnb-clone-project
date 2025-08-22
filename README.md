@@ -94,3 +94,60 @@ What They Do
 -  Regression Testing: Confirm that new changes don’t break existing functionality.
 - Quality Assurance: Ensure the final product is stable, secure, and ready for release.
 In short, QA engineers safeguard the quality and trustworthiness of a product before it reaches users.
+
+
+# Technology Stack
+
+## Django
+Django is a database-driven web application framework built with Python. It was designed to make building web applications faster, cleaner, and more secure.
+
+Although you can use Django without a database, it shines because of its built-in ORM (Object-Relational Mapper).
+
+🔹 What is an ORM?
+- An ORM lets you interact with your database using Python code instead of raw SQL.
+- You write models in Python.
+- Django translates them into SQL behind the scenes.
+- This makes working with databases easier, more readable, and less error-prone.
+
+🔹 Example: Without ORM (using raw SQL)
+```sql
+  -- Creating a "Person" table
+  CREATE TABLE persons (
+      id INT PRIMARY KEY,
+      first_name VARCHAR(100),
+      last_name VARCHAR(100),
+      age INT
+  );
+
+  -- Inserting data
+  INSERT INTO persons (id, first_name, last_name, age)
+  VALUES (1, 'John', 'Doe', 30);
+
+  -- Fetching data
+  SELECT first_name, last_name FROM persons WHERE id = 1;
+
+
+🔹 Example: With Django ORM
+python
+  # models.py
+  from django.db import models
+
+  class Person(models.Model):
+      first_name = models.CharField(max_length=100)
+      last_name = models.CharField(max_length=100)
+      age = models.IntegerField()
+
+Then in Django’s shell:
+  # Insert data
+  person = Person(first_name="John", last_name="Doe", age=30)
+  person.save()
+
+  # Fetch data
+  person = Person.objects.get(id=1)
+  print(person.first_name, person.last_name)  # Output: John Doe
+
+🔹 Why Django’s ORM is Powerful
+- Readable: You work with Python objects instead of SQL.
+- Portable: Switch databases (SQLite, PostgreSQL, MySQL, etc.) without changing code.
+- Secure: Protects against SQL injection automatically.
+- Scalable: ORM takes care of indexing, migrations, and relationships
