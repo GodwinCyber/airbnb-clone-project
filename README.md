@@ -103,13 +103,13 @@ Django is a database-driven web application framework built with Python. It was 
 
 Although you can use Django without a database, it shines because of its built-in ORM (Object-Relational Mapper).
 
-🔹 What is an ORM?
+__What is an ORM?__
 - An ORM lets you interact with your database using Python code instead of raw SQL.
 - You write models in Python.
 - Django translates them into SQL behind the scenes.
 - This makes working with databases easier, more readable, and less error-prone.
 
-🔹 Example: Without ORM (using raw SQL)
+__Example: Without ORM (using raw SQL)__
 ```sql
   -- Creating a "Person" table
   CREATE TABLE persons (
@@ -125,10 +125,11 @@ Although you can use Django without a database, it shines because of its built-i
 
   -- Fetching data
   SELECT first_name, last_name FROM persons WHERE id = 1;
+```
 
 
-🔹 Example: With Django ORM
-python
+__Example: With Django ORM__
+```python
   # models.py
   from django.db import models
 
@@ -136,8 +137,9 @@ python
       first_name = models.CharField(max_length=100)
       last_name = models.CharField(max_length=100)
       age = models.IntegerField()
-
-Then in Django’s shell:
+```
+__Then in Django’s shell:__
+```python
   # Insert data
   person = Person(first_name="John", last_name="Doe", age=30)
   person.save()
@@ -145,8 +147,8 @@ Then in Django’s shell:
   # Fetch data
   person = Person.objects.get(id=1)
   print(person.first_name, person.last_name)  # Output: John Doe
-
-🔹 Why Django’s ORM is Powerful
+```
+__Why Django’s ORM is Powerful__
 - Readable: You work with Python objects instead of SQL.
 - Portable: Switch databases (SQLite, PostgreSQL, MySQL, etc.) without changing code.
 - Secure: Protects against SQL injection automatically.
