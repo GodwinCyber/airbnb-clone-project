@@ -153,3 +153,80 @@ __Why Django’s ORM is Powerful__
 - Portable: Switch databases (SQLite, PostgreSQL, MySQL, etc.) without changing code.
 - Secure: Protects against SQL injection automatically.
 - Scalable: ORM takes care of indexing, migrations, and relationships
+
+## Django Rest Framework
+Django Rest Framework (DRF) is a powerful and flexible toolkit for building web APIs.
+
+__Why use Django Rest Framework?__
+- Browsable API: Developers can interact with the API directly from the browser, making debugging and testing easier.
+- __Authentication Policies:__ DRF supports authentication systems like OAuth1a, OAuth2, JWT, and session-based authentication.
+- __Permissions & Throttling:__ Control who can access an endpoint and how often they can access it.
+- __Serialization:__ Convert complex data (like Django models or querysets) into JSON, XML, or other formats. Also supports deserialization, which validates incoming JSON and converts it back into Python objects.
+- __Customizable:__ Use simple function-based views for lightweight APIs, or powerful class-based views for more complex logic.
+
+__Example 1: A Simple Serializer__
+```python
+  # serializers.py
+  from rest_framework import serializers
+  from .models import Person
+
+  class PersonSerializer(serializers.ModelSerializer):
+      class Meta:
+          model = Person
+          fields = ['id', 'first_name', 'last_name', 'age']
+```
+
+__Example 2: A Simple API View__
+```python
+  # views.py
+  from rest_framework.views import APIView
+  from rest_framework.response import Response
+  from .models import Person
+  from .serializers import PersonSerializer
+
+  class PersonListView(APIView):
+      def get(self, request):
+          people = Person.objects.all()
+          serializer = PersonSerializer(people, many=True)
+          return Response(serializer.data)
+```
+
+Now, hitting /api/persons/ will return:
+```json
+  [
+    { "id": 1, "first_name": "John", "last_name": "Doe", "age": 30 },
+    { "id": 2, "first_name": "Jane", "last_name": "Smith", "age": 25 }
+  ]
+```
+
+__Example 3: Using ViewSets + Routers (More DRF Power)__
+```python
+  # views.py
+  from rest_framework import viewsets
+  from .models import Person
+  from .serializers import PersonSerializer
+
+  class PersonViewSet(viewsets.ModelViewSet):
+      queryset = Person.objects.all()
+      serializer_class = PersonSerializer
+```
+```python
+  # urls.py
+  from rest_framework.routers import DefaultRouter
+  from django.urls import path, include
+  from .views import PersonViewSet
+
+  router = DefaultRouter()
+  router.register(r'persons', PersonViewSet)
+
+  urlpatterns = [
+      path('api/', include(router.urls)),
+  ]
+```
+
+__Now DRF automatically gives you:__
+- GET /api/persons/ → list all people
+- POST /api/persons/ → create a new person
+- GET /api/persons/{id}/ → retrieve one person
+- PUT /api/persons/{id}/ → update a person
+- DELETE /api/persons/{id}/ → delete a person
