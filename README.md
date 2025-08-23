@@ -612,8 +612,9 @@ __Real-World Use Cases__
   - Rolling out updates seamlessly without downtime.
 
 
+# Database Design
 
-# List of Entities and their field
+__List of Entities and their field__
 ## User
 Represents people who use the system.
 - id → Unique identifier for each user
@@ -655,7 +656,7 @@ Represents payment made for a booking.
 - method → Payment method (card, Bank, Ussd code)
 - status → “paid”, “failed”, “refunded”
 
-__Relationships Between Entities__
+## Relationships Between Entities
   - User ↔ Property
     - A User (host) can own multiple Properties.
     - Each Property belongs to one User.
@@ -690,8 +691,21 @@ __Example ERD (Entity Relationship Diagram) in text__
 ```
 
 
+# Feature Breakdown
+## user management
+Handles user registration, authentication, manange user profile, and roles (e.g., host or guest). This feature ensures that users can securely sign up, log in, and manage their profiles, while also enforcing permissions based on their role.
+
+## Property Management
+Allows hosts to Create, update, retrieve, delete, and manage their property listings with details like location, price, and availability. This feature makes it easy for hosts to showcase their properties and for guests to browse suitable options.
+
+## Booking System
+Make, update, and manage bookings, including check-in and check-out details. This feature ensures that bookings are tracked, avoids double reservations, and provides status updates (pending, confirmed, cancelled).
+
+## Payment System
+Processes payments for bookings securely, supporting multiple methods such as car payment, ussd code, and bank app payment. This feature ensures smooth financial transactions and gives both hosts and guests confidence in the booking process.
 
 
-
+## Review System
+Allows guests to leave feedback and ratings for properties they stayed in. This helps build trust in the platform, assists future guests in making decisions, and encourages hosts to maintain quality standards.
 
 
