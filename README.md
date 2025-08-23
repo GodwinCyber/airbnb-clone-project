@@ -230,3 +230,221 @@ __Now DRF automatically gives you:__
 - GET /api/persons/{id}/ → retrieve one person
 - PUT /api/persons/{id}/ → update a person
 - DELETE /api/persons/{id}/ → delete a person
+
+## PostgreSQL
+PostgreSQL is a powerful, open-source, object-oriented database management system. It is used in a wide range of applications, from small websites to large enterprise systems. PostgreSQL excels at handling complex data types, detailed queries, and relationships within data. It is well known for its robustness, scalability, and flexibility, making it suitable for diverse use cases.
+
+__PostgrSQL__
+PostgreSQL is an open-source descendant of the original Berkeley code. It supports a large part of the SQL standard and provides many modern features, such as:
+- nComplex queries
+- Foreign keys
+- Triggers
+- Views
+- Transactional integrity
+- Multiversion concurrency control (MVCC)
+
+__SQL__
+SQL (Structured Query Language) is different from PostgreSQL. SQL is a query language used to interact with relational databases, while PostgreSQL is a database management system (DBMS) that implements SQL (and extends it with advanced features).
+In other words, PostgreSQL uses SQL as the language to manage and query data, but it also adds its own powerful capabilities on top.
+
+__Example__
+```sql
+  -- Creating a "products" table in PostgreSQL
+  CREATE TABLE products (
+      product_id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      price NUMERIC CHECK (price > 0)
+  );
+
+  -- Inserting a row
+  INSERT INTO products (name, price)
+  VALUES ('Laptop', 1200.50);
+
+  -- Querying data
+  SELECT name, price FROM products WHERE price > 1000;
+```
+
+__Here,__
+- SQL is the language you use to define (CREATE TABLE), insert (INSERT), and query (SELECT).
+- PostgreSQL is the system that executes these SQL statements, enforces constraints (like CHECK (price > 0)), and manages the data reliably.
+
+
+## GraphQL
+GraphQL is a query language for APIs and a runtime for fulfilling those queries using your existing data. It provides a complete and understandable description of the data in your APIs. With GraphQL, clients have the power to request exactly what they need and nothing more, making APIs easier to evolve over time and enabling powerful developer tools.
+
+__GraphQL describe your data__
+You define a schema that describes the types of data and their relationships. For example:
+```graphqlReal-World Use Cases
+  type Project {
+    name: String
+    tagLine: String
+    contributors: [User]
+  }
+
+  type User {
+    id: ID
+    username: String
+  }
+```
+
+__Ask for what you want__
+When querying a GraphQL API, you specify the exact fields you want in the response.
+```graphql
+  {
+    project {
+      name
+      tagLine
+      contributors {
+        username
+      }
+    }
+  }
+```
+
+__Response Example__
+```json
+  {
+    "data": {
+      "project": {
+        "name": "OpenAI Docs",
+        "tagLine": "AI that powers creativity",
+        "contributors": [
+          { "username": "alice" },
+          { "username": "bob" }
+        ]
+      }
+    }
+  }
+```
+
+__ASk for what you need, get exactly that:__
+Send a graph query to your APIs and get exactly what you need nothing more, nothing less.
+
+## Celery
+Celery is a simple, flexible, and reliable distributed system for processing a vast number of messages while providing operations with the tools to maintain such a system. It is primarily a task queue that focuses on real-time processing while also supporting task scheduling.
+
+You can think of Celery as an asynchronous task/job queue that distributes work across multiple workers. It often uses Redis or RabbitMQ as a message broker to send and receive tasks.
+
+__Celery also provides:__
+- Result backends to track task results (e.g., Redis, database).
+- Monitoring using tools like Flower, a web-based dashboard to inspect and monitor queued tasks.
+
+__How Celery Works__
+- The client (your application) sends a task to the broker (e.g., Redis).
+- Celery workers listen to the broker, pick up tasks, and execute them.
+- The result backend stores the task result for later retrieval.
+
+__Example Setup (Using Redis as Broker)__
+- Install Celery and Redis
+```bash
+  pip install celery redis
+```
+
+- Create a Celery Application (tasks.py)
+```python
+  from celery import Celery
+
+  # Create Celery instance (use Redis as broker & backend)
+  app = Celery('tasks', broker='redis://localhost:6379/0', backend='redis://localhost:6379/0')
+
+  @app.task
+  def add(x, y):
+      return x + y
+```
+
+- Run Celery Worker
+```bash
+  celery -A tasks worker --loglevel=info
+```
+
+- Call the Task from Python Shell
+```python
+  from tasks import add
+
+  # Send task asynchronously
+  result = add.delay(4, 6)
+
+  # Check result
+  print(result.get(timeout=10))  # Output: 10
+```
+
+- Monitoring with Flower
+```bash
+  pip install flower
+  celery -A tasks flower
+```
+Flower will provide a dashboard (usually at http://localhost:5555) where you can track tasks, queues, and workers in real time.
+
+
+## Redis
+Redis is an in-memory data store widely used by millions of developers as a cache, vector database, streaming engine, and message broker. It is known for its speed because it stores data in RAM, making read and write operations extremely fast compared to traditional databases.
+
+__Redis supports various complex datatypes with atomic operations defined on them, such as:__
+- String
+- Hash
+- List
+- Set
+- Sorted Set
+- JSON
+
+__Why Redis?__
+- Traditional APIs interact directly with a database, which may introduce latency.
+- With Redis, frequently accessed data is stored in a cache server (in memory), enabling much faster retrieval.
+- Redis also supports data persistence, ensuring data can survive crashes or restarts by writing data periodically to disk.
+
+__Recent Redis advancements include:__
+- Redis Database (RDB) for snapshots (data persistence).
+- Append Only File (AOF) for logging every operation.
+- RedisJSON for JSON document support.
+- RedisSearch for full-text search.
+- Redis OM (Object Mapping) for working with Redis using OOP patterns.
+
+__Example: Using Redis as a Cache in Python__
+- Install Redis and Redis Client
+```bash
+  # Install redis-py client
+  pip install redis
+```
+
+- Make sure Redis server is running:
+```bash
+  redis-server
+```
+
+- Python Example (cache_example.py)
+```python
+  import redis
+
+  # CReal-World Use Casesonnect to Redis (localhost:6379 by default)
+  r = redis.Redis(host='localhost', port=6379, db=0)
+
+  # Store data (SET key value)
+  r.set("username", "godwin")
+
+  # Retrieve data (GET key)
+  print(r.get("username").decode("utf-8"))  # Output: godwin
+
+  # Example with expiry (cache)
+  r.setex("session_token", 60, "abc123")  # key expires in 60 seconds
+  print(r.get("session_token"))  # b'abc123'
+```
+
+- Running Commands in Redis CLI
+```bash
+  bash
+  Copy
+  Edit
+  redis-cli
+  > SET product "Laptop"
+  OK
+  > GET product
+  "Laptop"
+```
+
+__Real-World Use Cases__
+- Caching API responses to reduce load on databases.
+- Session storage in web applications (e.g., login sessions).
+- Message broker in task queues (e.g., with Celery).
+- Leaderboard tracking using Sorted Sets (e.g., gaming apps).
+- Pub/Sub for real-time notifications or chat applications.
+
