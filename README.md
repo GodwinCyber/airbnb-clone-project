@@ -448,3 +448,170 @@ __Real-World Use Cases__
 - Leaderboard tracking using Sorted Sets (e.g., gaming apps).
 - Pub/Sub for real-time notifications or chat applications.
 
+
+## Docker
+Docker is an open-source containerization technology that allows developers to build, package, and run applications inside containers. Containers are lightweight, portable, and ensure consistency across different environments (development, testing, and production).
+
+__How Docker Works__
+- The Docker Engine follows a client-server architecture:
+  1. Docker Daemon (dockerd)
+    - A background service running on the host machine.
+    - Responsible for creating and managing Docker objects such as containers, images, networks, and volumes.
+
+  2. Docker API
+    - Provides an interface that applications can use to communicate with the Docker Daemon.
+  3. Docker CLI (docker command)
+    - A command-line tool that uses the Docker API to interact with the Daemon.
+    - Developers use it directly or through scripts.
+
+__Key Docker Objects__
+- Image → A read-only template used to create containers (e.g., OS + app code + dependencies).
+- Container → A running instance of an image.
+- Network → Provides connectivity between containers.
+- Volume → Used for persistent storage.
+
+__Example: Running a Simple Web App with Docker__
+- Create an app.py file
+
+```python
+  from flask import Flask
+  app = Flask(__name__)
+
+  @app.route("/")
+  def hello():
+      return "Hello from Docker!"
+
+  if __name__ == "__main__":
+      app.run(host="0.0.0.0", port=5000)
+```
+- Creat a docker file
+```dockerfile
+  # Use official Python image as base
+  FROM python:3.9
+
+  # Set working directory
+  WORKDIR /app
+
+  # Copy files into container
+  COPY . .
+
+  # Install dependencies
+  RUN pip install flask
+
+  # Expose port
+  EXPOSE 5000
+
+  # Run application
+  CMD ["python", "app.py"]
+```
+
+- Build the docker image
+```bash
+  docker build -t flask-app .
+```
+
+- Run the container
+```bash
+  docker run -p 5000:5000 flask-app
+```
+
+__Real-world Use cases__
+- Microservices deployment (e.g., separating services into individual containers).
+- CI/CD pipelines to ensure environment consistency.
+- Isolated development environments.
+- Scaling applications with Docker Swarm or Kubernetes.
+
+
+## CI/CD Pipeline
+A Continuous Integration and Continuous Deployment (CI/CD) pipeline is a series of automated steps that developers follow to deliver new versions of software efficiently and reliably.
+
+It automates processes such as building, testing, deploying, and monitoring, ensuring faster delivery of high-quality code.
+
+__Why CI/CD Matters__
+- Speed → Faster release cycles with automation.
+- Quality → Automated testing catches bugs early.
+- Security → Issues are identified earlier in the lifecycle.
+- Flexibility → Quickly respond to user feedback and business changes.
+- Consistency → Eliminates human error in manual deployments.
+
+__Typical CI/CD Pipeline Stages__
+  1. Source (Commit Stage)
+    - Developer pushes code to Git repository (e.g., GitHub, GitLab, Bitbucket).
+  2. Build
+    - Code is compiled or packaged (e.g., Docker image created).
+  3. Test
+    - Unit tests, integration tests, and security scans run automatically.
+  4. Deploy
+    - Application is deployed to staging or production environment.
+  5. Monitor
+    - Logs and metrics are tracked to ensure performance and stability.
+  
+__Example: CI/CD Pipeline with GitHub Actions__Automating software delivery for microservices (e.g., Docker + Kubernetes).
+Ensuring faster releases in SaaS, FinTech, and e-commerce applications.
+Shift-left security (running vulnerability scans before deployment).
+Rolling out updates seamlessly without downtime.
+
+- Workflow file: .github/workflows/ci-cd.yml
+```yaml
+  name: CI/CD Pipeline
+
+  on:
+    push:
+      branches: [ "main" ]
+    pull_request:
+      branches: [ "main" ]
+
+  jobs:
+    build-test-deploy:
+      runs-on: ubuntu-latest
+
+      steps:
+        # Step 1: Checkout code
+        - name: Checkout Repository
+          uses: actions/checkout@v3
+
+        # Step 2: Set up Node.js
+        - name: Setup Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: '16'
+
+        # Step 3: Install dependencies
+        - name: Install Dependencies
+          run: npm install
+
+        # Step 4: Run tests
+        - name: Run Tests
+          run: npm test
+
+        # Step 5: Build Docker image
+        - name: Build Docker Image
+          run: docker build -t myapp:latest .
+
+        # Step 6: Deploy (example: push to Docker Hub)
+        - name: Push Docker Image
+          run: |
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+            docker tag myapp:latest mydockerhubuser/myapp:latest
+            docker push mydockerhubuser/myapp:latest
+```
+
+__How This Works__
+  1. Code is pushed to the main branch.
+  2. GitHub Actions runs the pipeline:
+    - Installs dependencies
+    - Runs tests
+    - Builds Docker image
+    - Pushes image to Docker Hub for deployment.
+  3. Deployment to production (e.g., Kubernetes, AWS ECS, or Heroku) happens automatically after successful builds.
+
+__Real-World Use Cases__
+  - Automating software delivery for microservices (e.g., Docker + Kubernetes).
+  - Ensuring faster releases in SaaS, FinTech, and e-commerce applications.
+  - Shift-left security (running vulnerability scans before deployment).
+  - Rolling out updates seamlessly without downtime.
+
+
+
+
+
