@@ -613,5 +613,85 @@ __Real-World Use Cases__
 
 
 
+# List of Entities and their field
+## User
+Represents people who use the system.
+- id → Unique identifier for each user
+- name → Full name of the user
+- email → Contact email (must be unique)
+- role →  "guest" or "host"
+- created_at → When the user registered
+
+## Property
+Represents a property listed for rent by a host.
+- id → Unique identifier for each property
+- title → Name of the property
+- location → Address or city
+- price_per_night → Rental cost per night
+- owner_id → Reference to the User who owns the property
+
+## Booking
+Represents a reservation made by a guest for a property.
+- id → Unique identifier for booking
+- property_id → The property being booked
+- user_id → The guest who booked
+- check_in → Start date of booking
+- check_out → End date of booking
+- status → “pending”, “confirmed”, “cancelled”
+
+## Review
+Represents feedback left by guests about a property.
+- id → Unique identifier for review
+- property_id → The property being reviewed
+- user_id → The guest who wrote the review
+- rating → Numeric rating (1–5 stars)
+- comment → Text review content
+
+## Payment
+Represents payment made for a booking.
+- id → Unique identifier for payment
+- booking_id → The booking this payment is for
+- amount → Payment amount
+- method → Payment method (card, Bank, Ussd code)
+- status → “paid”, “failed”, “refunded”
+
+__Relationships Between Entities__
+  - User ↔ Property
+    - A User (host) can own multiple Properties.
+    - Each Property belongs to one User.
+
+  - Property ↔ Booking
+    - A Property can have many Bookings.
+    - Each Booking belongs to one Property.
+
+  - User ↔ Booking
+    - A User (guest) can make multiple Bookings.
+    - Each Booking belongs to one User
+
+  - Property ↔ Review
+    - A Property can have many Reviews.
+    - Each Review belongs to one Property.
+
+  - User ↔ Review
+    - A User can write multiple Reviews.
+    - Each Review belongs to one User.
+
+  - Booking ↔ Payment
+    - A Booking can have one Payment.
+    - Each Payment is tied to one Booking.
+
+__Example ERD (Entity Relationship Diagram) in text__
+```sql
+  User (id, name, email, role)
+    |---< Property (id, title, location, price_per_night, owner_id)
+    |       |---< Booking (id, property_id, user_id, check_in, check_out, status)
+    |       |       |--- Payment (id, booking_id, amount, method, status)
+    |       |---< Review (id, property_id, user_id, rating, comment)
+```
+
+
+
+
+
 
 
