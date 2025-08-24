@@ -826,7 +826,7 @@ __Case 1: Authenticated User within Limit__
       location /api/ {
           limit_req zone=api_limit burst=10 nodelay;
       }
-  }valid_token>
+  } valid_token>
 ```
 Allowed (still under 100 requests per day).
 
