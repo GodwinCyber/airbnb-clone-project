@@ -854,9 +854,19 @@ For example, using Nginx:
 This means each client can make 5 requests per second.
 
 
+# CI/CD Pipeline
+A CI/CD pipeline (Continuous Integration/Continuous Deployment) is a set of automated steps that allows developers to build, test, and deploy code efficiently. CI/CD ensures that every change made to the project is tested, integrated, and delivered automatically, reducing errors and speeding up delivery.
 
+__They are important for the project because they:__
+- Ensure faster development and deployment through automation.
+- Detect bugs early with automated testing.
+- Provide consistent and reliable releases.
+- Improve collaboration by integrating code changes seamlessly.
 
-
+__Tools for CI/CD in this Project__
+- GitHub Actions – to automate building, testing, and deploying code directly from GitHub.
+- Docker – to containerize the application for consistent environments across development and production.
+- Jenkins / GitLab CI – alternatives for setting up more customizable pipelines.
 
 
 
