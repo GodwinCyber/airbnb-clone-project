@@ -709,3 +709,158 @@ Processes payments for bookings securely, supporting multiple methods such as ca
 Allows guests to leave feedback and ratings for properties they stayed in. This helps build trust in the platform, assists future guests in making decisions, and encourages hosts to maintain quality standards.
 
 
+# API Security
+## authentication
+Authentication is the process of verifying the identity of a user or system that is making a request to an API. In this project, we will use Django Rest Framework (DRF) authentication policies. Authentication helps ensure that requests are linked to valid and authorized users by checking credentials such as tokens or sessions.
+
+In DRF, we can use different authentication methods, such as OAuth1a or OAuth2, to manage secure access. These protocols allow users to authenticate without sharing their passwords directly and provide tokens that can be used for subsequent requests.
+
+__Example__
+Suppose a user logs in through the API and obtains an access token. This token is then included in the headers of subsequent API requests:
+```http
+  POST /api/login/
+  Content-Type: application/json
+
+  {
+    "username": "john_doe",
+    "password": "securePassword123"
+  }
+```
+
+```json
+  {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5..."
+  }
+```
+Now, when the user wants to access a protected endpoint (e.g., /api/properties/), they send the token with the request:
+```http
+  GET /api/properties/
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5...
+```
+If the token is valid, the API grants access; otherwise, it returns an unauthorized error.
+
+
+## authorization
+Authorization is the process of determining what actions a user is allowed to perform after they have been authenticated. While authentication verifies who the user is, authorization controls what the user can do.
+
+In the context of an API, authorization ensures that only users with the correct roles or permissions can access specific endpoints or perform certain actions.
+
+__How Authorization Works__
+- A user logs in and is authenticated (e.g., using a token).
+- The system checks the user’s role or permissions.
+- Based on the role, the system grants or denies access to the requested resource.
+
+
+__Example in a Django REST Framework Project__
+- Suppose we have two roles in our system:
+- Admin – can create, update, and delete properties.
+- Regular User – can only view properties and create bookings.
+
+__Example 1: Admin Access to Create Property__
+```http
+  POST /api/properties/
+  Authorization: Bearer <admin_token>
+
+  {
+    "name": "Seaside Villa",
+    "location": "Lagos",
+    "price": 250
+  }
+```
+Since the token belongs to an Admin, the request succeeds, and the property is created.
+
+__Example 2: Regular User Trying to Create Property__
+```http
+  POST /api/properties/
+  Authorization: Bearer <user_token>
+
+  {
+    "name": "Mountain Cabin",
+    "location": "Abuja",
+    "price": 180
+  }
+```
+ Response:
+```http
+  {
+    "detail": "You do not have permission to perform this action."
+  }
+```
+Here, the system authorizes access based on the user role and denies the request because the user is not an Admin.
+
+## rate limiting
+Rate limiting is a technique used to control the number of API requests a user or client can make within a specific period of time. It helps protect APIs from abuse, ensures fair usage, and improves performance by preventing overload.
+
+__For example:__
+- A user may only be allowed 100 requests per minute.
+- If the user exceeds this limit, the API will block further requests or return an error response (e.g., 429 Too Many Requests).
+
+__Why is Rate Limiting Important?__
+- Prevents abuse (e.g., bots making thousands of requests).
+- Protects against Denial of Service (DoS) attacks.
+- Ensures fair usage among multiple users.
+- Reduces server overload and keeps the system stable.
+
+__Example in a Django REST Framework Project__
+DRF supports throttling (rate limiting) through settings.
+
+__Step 1: Enable Throttling in settings.py__
+```python
+  REST_FRAMEWORK = {
+      'DEFAULT_THROTTLE_CLASSES': [
+          'rest_framework.throttling.UserRateThrottle',
+          'rest_framework.throttling.AnonRateThrottle',
+      ],
+      'DEFAULT_THROTTLE_RATES': {
+          'user': '100/day',   # Authenticated users: 100 requests per day
+          'anon': '10/hour',   # Unauthenticated users: 10 requests per hour
+      }
+  }
+```
+__Step 2: Example API Requests__
+__Case 1: Authenticated User within Limit__
+```http
+  GET /api/properties/  limit_req_zone $binary_remote_addr zone=api_limit:10m rate=5r/s;
+
+  server {
+      location /api/ {
+          limit_req zone=api_limit burst=10 nodelay;
+      }
+  }valid_token>
+```
+Allowed (still under 100 requests per day).
+
+__Case 2: Authenticated User Exceeding Limit__
+After making 101 requests in one day:
+```json
+  {
+    "detail": "Request was throttled. Expected available in 23:59:59 hours."
+  }
+```
+The system blocks further requests until the limit resets.
+
+__Example with API Gateway (like Nginx)__
+Even outside Django, rate limiting can be applied at the server level.
+For example, using Nginx:
+```nginx
+  limit_req_zone $binary_remote_addr zone=api_limit:10m rate=5r/s;
+
+  server {
+      location /api/ {
+          limit_req zone=api_limit burst=10 nodelay;
+      }
+  }
+```
+This means each client can make 5 requests per second.
+
+
+
+
+
+
+
+
+
+
+
+
